@@ -4,50 +4,90 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Client;
+use illuminate\Http\RedirectResponse;
 
 class ClientController extends Controller
 {
-    // Método para exibir o formulário de criação de cliente
-    public function create()
+    /**
+     * Retorna a view para cadastro de um cliente
+     */
+    public function create(): \Illuminate\View\View
     {
         return view('clients.create');
     }
 
-    public function index()
+    /**
+     * Retorna a view da aba Clientes, listando todos
+     */
+    public function index(): \Illuminate\View\View
     {
         $clients = Client::all();
         return view('clients.index', compact('clients'));
     }
 
-    // Método para armazenar um novo cliente
-    public function store(Request $request)
+    /**
+     * Valida os dados recebidos para criação de um cliente e retorna a view com os dados dos clientes
+     */
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
-        // Validação dos dados do formulário
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:clients',
-            // Adicione outras regras de validação conforme necessário
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
         ]);
-
-        // Criação do cliente no banco de dados
-        Client::create($request->all());
-
-        // Redirecionamento após criar o cliente
-        return redirect()->route('clients.index');
+    
+        $client = new Client();
+        $client->name = $request->name;
+        $client->address = $request->address;
+        $client->phone = $request->phone;
+        $client->save();
+    
+        return redirect()->route('clients.index')->with('success', 'Cliente cadastrado com sucesso!');
     }
 
-    // Método para exibir os detalhes de um cliente específico
-    public function show(Client $client)
+    /** 
+     * Retorna a view que exibe os dados de um cliente
+     */
+    public function show(Client $client): \Illuminate\View\View
     {
         return view('clients.show', compact('client'));
     }
 
-    // Método para excluir um cliente
-    public function destroy(Client $cliente)
+    /**
+     * Retorna a view que edita os dados de um cliente
+     */
+    public function edit(Client $client): \Illuminate\View\View
     {
-        $cliente->delete();
-
-        // Redirecionamento após excluir o cliente
-        return redirect()->route('clients.index');
+        return view('clients.edit', compact('client'));
     }
+
+    /**
+     * Valida e atualiza os dados de um cliente
+     */
+    public function update(Request $request, Client $client): \Illuminate\Http\RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+        ]);
+
+        $client->update([
+            'name' => $request->name,
+            'address' => $request->address,
+            'phone' => $request->phone,
+        ]);
+
+        return redirect()->route('clients.index')->with('success', 'Cliente atualizado com sucesso!');
+    }
+    
+    /**
+     * Realiza a exclusão de um cliente e retorna para a view de clientes
+     */
+    public function destroy(Client $client): \Illuminate\Http\RedirectResponse
+    {
+        $client->delete();
+        return redirect()->route('clients.index')->with('success', 'Cliente excluído com sucesso!');
+    }
+
 }

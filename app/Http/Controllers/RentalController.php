@@ -4,47 +4,76 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Rent;
+use App\Models\Movie;
+use App\Models\Client;
 
 class RentalController extends Controller
 {
-    // Método para exibir o formulário de criação de aluguel
+    /**
+     * Método para exibir o formulário de criação de aluguel
+     */
     public function create()
     {
-        // Aqui você pode retornar a view para o formulário de criação de aluguel
+        // Buscar apenas os filmes disponíveis para aluguel
+        $movies = Movie::where('available', true)->get();
+        
+        $clients = Client::all();
+        
+        return view('rentals.create', compact('clients', 'movies'));
     }
 
     public function index()
     {
-        $rentals = Rent::all();
+        // Carregar os aluguéis com os relacionamentos 'client' e 'movie' para evitar erros de "property on null"
+        $rentals = Rent::with('client', 'movie')->get();
         return view('rentals.index', compact('rentals'));
     }
-
-    // Método para armazenar um novo aluguel
+    
+    /**
+     * Valida os dados recebidos para criação de um aluguel e retorna a view com os dados dos aluguéis
+     */
     public function store(Request $request)
     {
-        // Validação dos dados do formulário
         $request->validate([
-
-            // Defina suas regras de validação conforme necessário
+            'client_id' => 'required',
+            'film_id' => 'required',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
         ]);
-
-        // Criação do aluguel no banco de dados
-        Rent::create($request->all());
-
-        // Redirecionamento após criar o aluguel
-        return redirect()->route('rentals.index');
+        
+        $rent = new Rent();
+        $rent->client_id = $request->client_id;
+        $rent->film_id = $request->film_id;
+        $rent->rent_date = $request->start_date;
+        $rent->return_date = $request->end_date;
+        $rent->save();
+        
+        $movie = Movie::find($request->film_id);
+        $movie->available = false;
+        $movie->save();
+        
+        return redirect()->route('rentals.index')->with('success', 'Aluguel cadastrado com sucesso!');
     }
 
-    // Método para exibir os detalhes de um aluguel específico
+    /**
+    * Método para exibir os detalhes de um aluguel específico 
+    */ 
     public function show(Rent $rental)
     {
         return view('rentals.show', compact('rental'));
     }
 
-    // Método para excluir um aluguel
+    /**
+    * Método para excluir um aluguel
+    */ 
     public function destroy(Rent $rental)
     {
+        $movie = $rental->movie;
         $rental->delete();
+        $movie->available = true;
+        $movie->save();
+
         return redirect()->route('rentals.index');
     }
+
 }

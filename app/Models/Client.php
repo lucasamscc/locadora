@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
-
     protected $table = 'clients';
-    protected $fillabel = ['name', 'address', 'phone'];
+    protected $fillable = ['name', 'address', 'phone'];
+    public $timestamps = false;
     
     use HasFactory;
 }
