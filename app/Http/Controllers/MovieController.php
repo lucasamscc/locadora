@@ -23,11 +23,9 @@ class MovieController extends Controller
     {
         $search = $request->query('search');
 
-        // Se houver uma consulta de pesquisa, filtre os filmes
         if ($search) {
             $movies = Movie::where('title', 'like', '%' . $search . '%')->get();
         } else {
-            // Caso contrário, obtenha todos os filmes
             $movies = Movie::all();
         }
 
@@ -93,7 +91,6 @@ class MovieController extends Controller
             'poster' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Remova a obrigatoriedade do campo poster
         ]);
     
-        // Apenas atualize os campos que foram preenchidos no formulário
         $data = [
             'title' => $request->input('title'),
             'director' => $request->input('director'),
@@ -102,7 +99,6 @@ class MovieController extends Controller
             'price' => $request->input('price'),
         ];
     
-        // Se um novo poster foi enviado, atualize-o
         if ($request->hasFile('poster')) {
             $posterPath = $request->file('poster')->store('posters');
             $data['poster'] = $posterPath;
@@ -114,6 +110,9 @@ class MovieController extends Controller
     }
     
 
+    /**
+     * Realiza o delete validando caso o filme esteja alugando
+     */
     public function destroy(Movie $movie)
     {
         $rentals = Rent::where('film_id', $movie->id)->exists();

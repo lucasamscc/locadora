@@ -92,6 +92,9 @@ class RentalController extends Controller
         return redirect()->route('rentals.index');
     }
 
+    /**
+     * Função para relatório dos filmes mais alugados
+     */
     public function mostRentedMovies()
     {
         $mostRentedMovies = Rent::select('movies.title', 'movies.id', DB::raw('count(*) as total'))
@@ -104,17 +107,18 @@ class RentalController extends Controller
         return $mostRentedMovies;
     }    
 
+    /**
+     * Função para relatório de filmes que nunca foram alugados
+     */
     public function neverRentedMovies()
-{
-    // Encontre os IDs dos filmes nunca alugados
-    $neverRentedMovieIds = Movie::whereNotIn('id', function($query) {
-        $query->select('film_id')->from('rentals');
-    })->pluck('id');
+    {
+        $neverRentedMovieIds = Movie::whereNotIn('id', function($query) {
+            $query->select('film_id')->from('rentals');
+        })->pluck('id');
 
-    // Encontre os detalhes dos filmes nunca alugados
-    $neverRentedMovies = Movie::whereIn('id', $neverRentedMovieIds)->get();
+        $neverRentedMovies = Movie::whereIn('id', $neverRentedMovieIds)->get();
 
-    return $neverRentedMovies;
-}
+        return $neverRentedMovies;
+    }
 
 }

@@ -100,6 +100,9 @@ class ClientController extends Controller
         }
     }
 
+    /**
+     * Função para gerar relatório de clientes mais ativos
+     */
     public function mostActiveClients()
     {
         $mostActiveClients = DB::table('clients')

@@ -40,7 +40,6 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="{{ route('rentals.show', $rental->id) }}" class="btn btn-sm btn-info">Visualizar</a>
                                             @if (!$rental->status)
                                                 <form action="{{ route('rentals.close', $rental->id) }}" method="POST" style="display: inline-block;">
                                                     @csrf

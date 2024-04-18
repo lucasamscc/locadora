@@ -11,7 +11,6 @@
                     <th>Título</th>
                     <th>Diretor</th>
                     <th>Ano</th>
-                    <!-- Adicione mais colunas conforme necessário -->
                 </tr>
             </thead>
             <tbody>
@@ -20,7 +19,6 @@
                         <td>{{ $movie->title }}</td>
                         <td>{{ $movie->director }}</td>
                         <td>{{ $movie->year }}</td>
-                        <!-- Adicione mais colunas conforme necessário -->
                     </tr>
                 @endforeach
             </tbody>
