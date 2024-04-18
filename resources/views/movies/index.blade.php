@@ -11,6 +11,18 @@
                         <h1 class="card-title text-center">Filmes</h1>
                     </div>
                     <div class="card-body">
+                        @if(session()->has('success'))
+                            <div class="alert alert-success" role="alert" id="success-alert">
+                                {{ session()->get('success') }}
+                            </div>
+                        @endif
+
+                        @if(session()->has('error'))
+                            <div class="alert alert-danger" role="alert" id="error-alert">
+                                {{ session()->get('error') }}
+                            </div>
+                        @endif
+                        
                         <div class="col-md-12 mb-3"> <!-- Alterado para tamanho 12 -->
                             <form action="{{ route('movies.index') }}" method="GET">
                                 <div class="input-group">
@@ -61,4 +73,17 @@
             </div>
         </div>
     </div>
+
+    <script>
+        setTimeout(function() {
+            var successAlert = document.getElementById('success-alert');
+            var errorAlert = document.getElementById('error-alert');
+            if (successAlert) {
+                successAlert.style.display = 'none';
+            }
+            if (errorAlert) {
+                errorAlert.style.display = 'none';
+            }
+        }, 2000);
+    </script>
 @endsection

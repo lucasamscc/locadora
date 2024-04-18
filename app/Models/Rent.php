@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class Rent extends Model
 {
     protected $table = 'rentals';
-    protected $fillable = ['client_id', 'film_id', 'rent_date', 'return_date'];
+    protected $fillable = ['client_id', 'film_id', 'rent_date', 'return_date', 'status'];
     public $timestamps = false;
 
     use HasFactory;

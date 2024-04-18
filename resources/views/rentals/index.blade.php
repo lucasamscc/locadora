@@ -20,6 +20,7 @@
                                     <th>Filme</th>
                                     <th>Data de Início</th>
                                     <th>Data de Fim</th>
+                                    <th>Status</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
@@ -32,8 +33,20 @@
                                         <td>{{ $rental->rent_date}}</td>
                                         <td>{{ $rental->return_date }}</td>
                                         <td>
+                                            @if ($rental->status)
+                                                <span>Encerrado</span>
+                                            @else
+                                                <span>Em andamento</span>
+                                            @endif
+                                        </td>
+                                        <td>
                                             <a href="{{ route('rentals.show', $rental->id) }}" class="btn btn-sm btn-info">Visualizar</a>
-                                            <a href="{{ route('rentals.edit', $rental->id) }}" class="btn btn-sm btn-primary">Editar</a>
+                                            @if (!$rental->status)
+                                                <form action="{{ route('rentals.close', $rental->id) }}" method="POST" style="display: inline-block;">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-warning">Encerrar</button>
+                                                </form>
+                                            @endif
                                             <form action="{{ route('rentals.destroy', $rental->id) }}" method="POST" style="display: inline-block;">
                                                 @csrf
                                                 @method('DELETE')

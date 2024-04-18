@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Client;
+use App\Models\Rent;
 use illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+
 
 class ClientController extends Controller
 {
@@ -17,13 +20,14 @@ class ClientController extends Controller
     }
 
     /**
-     * Retorna a view da aba Clientes, listando todos
+     * Retorna a view da aba Clientes, listando todos com paginação
      */
     public function index(): \Illuminate\View\View
     {
-        $clients = Client::all();
+        $clients = Client::all(); // 10 é o número de registros por página
         return view('clients.index', compact('clients'));
     }
+
 
     /**
      * Valida os dados recebidos para criação de um cliente e retorna a view com os dados dos clientes
@@ -84,10 +88,28 @@ class ClientController extends Controller
     /**
      * Realiza a exclusão de um cliente e retorna para a view de clientes
      */
-    public function destroy(Client $client): \Illuminate\Http\RedirectResponse
+    public function destroy(Client $client): RedirectResponse
     {
-        $client->delete();
-        return redirect()->route('clients.index')->with('success', 'Cliente excluído com sucesso!');
+        $associatedRentals = Rent::where('client_id', $client->id)->exists();
+    
+        if ($associatedRentals) {
+            return redirect()->route('clients.index')->with('error', 'Não é possível excluir o cliente porque há aluguéis associados a ele.');
+        } else {
+            $client->delete();
+            return redirect()->route('clients.index')->with('success', 'Cliente excluído com sucesso!');
+        }
     }
 
+    public function mostActiveClients()
+    {
+        $mostActiveClients = DB::table('clients')
+            ->join('rentals', 'clients.id', '=', 'rentals.client_id')
+            ->select('clients.id', 'clients.name', DB::raw('count(rentals.id) as total_rentals'))
+            ->groupBy('clients.id', 'clients.name')
+            ->orderByDesc('total_rentals')
+            ->limit(10)
+            ->get();
+
+        return view('clients.most_active', compact('mostActiveClients'));
+    }
 }

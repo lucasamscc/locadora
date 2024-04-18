@@ -12,4 +12,9 @@ class Movie extends Model
     public $timestamps = false;
     
     use HasFactory;
+
+    public function rents()
+    {
+        return $this->hasMany(Rent::class, 'film_id');
+    }
 }

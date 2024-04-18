@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Rent;
 use App\Models\Movie;
 use App\Models\Client;
+use Illuminate\Support\Facades\DB;
 
 class RentalController extends Controller
 {
@@ -64,6 +65,21 @@ class RentalController extends Controller
     }
 
     /**
+     * Método para encerrar um aluguel
+     */ 
+    public function close(Rent $rental)
+    {
+        $rental->status = true; // Alterando o status para encerrado
+        $rental->save();
+
+        $movie = $rental->movie;
+        $movie->available = true;
+        $movie->save();
+
+        return redirect()->route('rentals.index')->with('success', 'Aluguel encerrado com sucesso!');
+    }
+
+    /**
     * Método para excluir um aluguel
     */ 
     public function destroy(Rent $rental)
@@ -75,5 +91,30 @@ class RentalController extends Controller
 
         return redirect()->route('rentals.index');
     }
+
+    public function mostRentedMovies()
+    {
+        $mostRentedMovies = Rent::select('movies.title', 'movies.id', DB::raw('count(*) as total'))
+            ->join('movies', 'rentals.film_id', '=', 'movies.id')
+            ->groupBy('movies.id', 'movies.title')
+            ->orderByDesc('total')
+            ->limit(10)
+            ->get();
+    
+        return $mostRentedMovies;
+    }    
+
+    public function neverRentedMovies()
+{
+    // Encontre os IDs dos filmes nunca alugados
+    $neverRentedMovieIds = Movie::whereNotIn('id', function($query) {
+        $query->select('film_id')->from('rentals');
+    })->pluck('id');
+
+    // Encontre os detalhes dos filmes nunca alugados
+    $neverRentedMovies = Movie::whereIn('id', $neverRentedMovieIds)->get();
+
+    return $neverRentedMovies;
+}
 
 }

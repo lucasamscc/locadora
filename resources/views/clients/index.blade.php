@@ -2,6 +2,11 @@
 
 @section('title', 'Clientes')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+@endpush
+
+
 @section('content')
     <div class="container">
         <div class="row">
@@ -11,6 +16,18 @@
                         <h1 class="card-title text-center">Clientes</h1>
                     </div>
                     <div class="card-body">
+                        @if(session()->has('success'))
+                            <div class="alert alert-success" role="alert" id="success-alert">
+                                {{ session()->get('success') }}
+                            </div>
+                        @endif
+
+                        @if(session()->has('error'))
+                            <div class="alert alert-danger" role="alert" id="error-alert">
+                                {{ session()->get('error') }}
+                            </div>
+                        @endif
+
                         <a href="{{ route('clients.create') }}" class="btn btn-primary mb-3">Cadastrar Cliente</a>
 
                         <table class="table">
@@ -41,9 +58,25 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+
+    <script>
+        setTimeout(function() {
+            var successAlert = document.getElementById('success-alert');
+            var errorAlert = document.getElementById('error-alert');
+            if (successAlert) {
+                successAlert.style.display = 'none';
+            }
+            if (errorAlert) {
+                errorAlert.style.display = 'none';
+            }
+        }, 2000);
+    </script>
 @endsection

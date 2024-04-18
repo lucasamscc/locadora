@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Movie;
+use App\Models\Rent;
 
 class MovieController extends Controller
 {
@@ -71,7 +72,7 @@ class MovieController extends Controller
     }
 
     /**
-     * Retorna a view que edita os dados de um cliente
+     * Retorna a view que edita os dados de um filme
      */
     public function edit(Movie $movie): \Illuminate\View\View
     {
@@ -113,12 +114,17 @@ class MovieController extends Controller
     }
     
 
-    // Método para excluir um filme
     public function destroy(Movie $movie)
     {
-        $movie->delete();
+        $rentals = Rent::where('film_id', $movie->id)->exists();
 
-        // Redirecionamento após excluir o filme
+        if ($rentals) {
+            session()->flash('error', 'Não é possível excluir o filme porque está em uso.');
+        } else {
+            $movie->delete();
+            session()->flash('success', 'Filme excluído com sucesso.');
+        }
+
         return redirect()->route('movies.index');
     }
 }
