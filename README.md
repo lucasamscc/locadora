@@ -36,25 +36,13 @@ Siga estas etapas para configurar e executar o projeto em sua máquina:
 
 4. Crie um arquivo `.env` na raiz do projeto, baseado no arquivo `.env.example` fornecido. Este arquivo contém as configurações específicas do ambiente, como conexões de banco de dados e chaves de aplicativo.
 
-5. Importe o backup do banco de dados. Você pode fazer isso seguindo as instruções específicas do seu sistema de gerenciamento de banco de dados. Por exemplo, se estiver usando o phpMyAdmin com XAMPP, você pode fazer o seguinte:
+5. Importe o backup do banco de dados que esta nesse repositório salvo como `locadora.sql`. Você pode fazer isso seguindo as instruções específicas do seu sistema de gerenciamento de banco de dados. Por exemplo, se estiver usando o phpMyAdmin com XAMPP, você pode fazer o seguinte:
 
     - Inicie o servidor Apache e MySQL do XAMPP.
     - Acesse o phpMyAdmin em `http://localhost/phpmyadmin`.
     - Crie um novo banco de dados com o mesmo nome especificado no arquivo `.env`.
     - Selecione o novo banco de dados e vá para a aba "Importar".
     - Selecione o arquivo de backup SQL fornecido e clique em "Executar".
-
-6. Depois de importar o banco de dados, execute as migrações do Laravel para garantir que o esquema do banco de dados esteja atualizado:
-
-    ```bash
-    php artisan migrate
-    ```
-
-7. Opcionalmente, você pode preencher o banco de dados com dados iniciais usando:
-
-    ```bash
-    php artisan db:seed
-    ```
 
 8. Por fim, inicie o servidor de desenvolvimento local:
 
@@ -63,6 +51,8 @@ Siga estas etapas para configurar e executar o projeto em sua máquina:
     ```
 
     Agora, você pode acessar o projeto em `http://localhost:8000` no seu navegador.
+
+9. Possivelmente irá carregar uma tela informando ser necessário gerar uma key, basta apenas clicar em `generate key` e recarregar a tela
 
 ## Licença
 
